@@ -14,7 +14,5 @@ const startingMove: Move = "x"
 
 const container = document.querySelector("#container") as HTMLDivElement
 
-const game = new TicTacToeGame(startingMove)
-game.init(container)
-
-game.makeMove({ row: 1, item: 1 }, "x")
+const game = new TicTacToeGame()
+game.init(container, startingMove)
