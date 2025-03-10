@@ -9,8 +9,12 @@
   <title>Web Tic Tac Toe</title>
 </head>
 
-<body class="grid h-[100vh] w-[100vw] place-items-center">
-  <div id="container" class="grid size-[60vmin] grid-cols-3 grid-rows-3 items-center justify-items-center">
+<body class="flex h-[100vh] w-[100vw] flex-col items-center justify-end gap-8 md:flex-row-reverse md:justify-around">
+  <div id="game-container"
+    class="grid aspect-square size-[80vmin] grid-cols-3 grid-rows-3 items-center justify-items-center md:size-[60vmin]">
+  </div>
+  <div id="controls-container" class="h-[20vmin] w-full border p-4 md:h-auto md:w-auto md:rounded-md">
+    Controls
   </div>
 </body>
 

@@ -5,13 +5,19 @@ import {
   DomBoardElements,
   DomBoardCell,
   Move,
+  BoardPosition,
 } from "@/types/types"
 import { createElement, Circle, X } from "lucide"
+import winPatterns from "@/lib/winning_positions"
+import { clear } from "console"
 
-interface BoardPosition {
-  rowIndex: BoardIndex
-  cellIndex: BoardIndex
+interface TicTacToeGameInitOpts {
+  startingMove: Move
+  boardContainer: HTMLDivElement
+  controlsContainer: HTMLDivElement
 }
+
+type GameState = "not initialized" | "playing" | "x win" | "o win" | "draw"
 
 export default class TicTacToeGame {
   boardHistory: BoardState[]
@@ -19,6 +25,9 @@ export default class TicTacToeGame {
   currentToMove: Move | null
   domBoardElements: DomBoardElements | null
   domBoardContainer: HTMLDivElement | null
+  domControlsContainer: HTMLDivElement | null
+  winner: Move | null
+  gameState: GameState
 
   constructor() {
     this.boardState = TicTacToeGame.createEmptyBoard()
@@ -26,12 +35,21 @@ export default class TicTacToeGame {
     this.currentToMove = null
     this.domBoardElements = null
     this.domBoardContainer = null
+    this.domControlsContainer = null
+    this.winner = null
+    this.gameState = "not initialized"
   }
 
-  init(boardContainer: HTMLDivElement, startingMove: Move): DomBoardElements {
+  init({
+    startingMove,
+    boardContainer,
+    controlsContainer,
+  }: TicTacToeGameInitOpts): DomBoardElements {
     this.currentToMove = startingMove
     this.boardHistory = [...this.boardHistory]
     this.domBoardContainer = boardContainer
+    this.domControlsContainer = controlsContainer
+
     this.domBoardElements = this.boardState.map((row, rowIndex) =>
       row.map((cell, cellIndex) =>
         this.createDomCell(cell, {
@@ -45,7 +63,16 @@ export default class TicTacToeGame {
       row.map((cell) => boardContainer.appendChild(cell)),
     )
 
+    this.gameState = "playing"
     return this.domBoardElements
+  }
+
+  updateState(): GameState {
+    this.gameState = this.checkGameState()
+    console.log(this.gameState)
+    this.refreshDomBoard()
+
+    return this.gameState
   }
 
   refreshDomBoard(): DomBoardElements {
@@ -106,6 +133,9 @@ export default class TicTacToeGame {
 
     cell.addEventListener("click", () => {
       try {
+        if (!this.currentToMove) {
+          throw new Error("Unable to move: Current move not initialized")
+        }
         this.makeMove(
           { rowIndex: rowIndex, cellIndex: cellIndex },
           this.currentToMove,
@@ -120,7 +150,7 @@ export default class TicTacToeGame {
     })
 
     const cellClassNames =
-      "nth-2:border-l-2 nth-2:border-r-2 nth-4:border-t-2 nth-4:border-b-2 nth-5:border-2 nth-6:border-t-2 nth-6:border-b-2 nth-8:border-l-2 nth-8:border-r-2 flex items-center justify-center size-full"
+      "nth-2:border-l-2 nth-2:border-r-2 nth-4:border-t-2 nth-4:border-b-2 nth-5:border-2 nth-6:border-t-2 nth-6:border-b-2 nth-8:border-l-2 nth-8:border-r-2 flex items-center justify-center aspect-square size-full"
 
     cell.classList.add(...cellClassNames.split(/ +/))
 
@@ -142,13 +172,18 @@ export default class TicTacToeGame {
     return move === "x" ? "o" : "x"
   }
 
-  setBoard(newBoardState: BoardState) {
+  setBoard(newBoardState: BoardState): BoardState {
     this.boardState = newBoardState
-    this.refreshDomBoard()
+    this.updateState()
+    return newBoardState
   }
 
   makeMove(boardPos: BoardPosition, move: Move): BoardState {
     const { rowIndex: row, cellIndex: cell } = boardPos
+
+    if (!(this.gameState === "playing")) {
+      throw new Error("Invalid move: Game is not in playing state")
+    }
 
     if (this.boardState[row][cell] !== "_") {
       throw new Error("Invalid move: Cell is already occupied")
@@ -166,8 +201,50 @@ export default class TicTacToeGame {
       this.boardState.map((row) => [...row]) as BoardState,
     ]
 
-    this.refreshDomBoard()
-
+    this.updateState()
     return this.boardState
+  }
+
+  checkGameState(): GameState {
+    let result: GameState = "playing"
+    if (this.hasWon()) {
+      result = this.hasWon() === "x" ? "x win" : "o win"
+    }
+    if (this.hasDrawn()) {
+      result = "draw"
+    }
+    return result
+  }
+
+  hasDrawn(): boolean {
+    if (this.hasWon()) {
+      return false
+    }
+
+    if (this.boardState.flat().every((cell) => cell !== "_")) {
+      return true
+    }
+
+    return false
+  }
+
+  hasWon(): Move | false {
+    for (const pattern of winPatterns) {
+      const [a, b, c] = pattern
+      const board = this.boardState
+
+      const boardA = board[a.rowIndex][a.cellIndex]
+      const boardB = board[b.rowIndex][b.cellIndex]
+      const boardC = board[c.rowIndex][c.cellIndex]
+
+      if (boardA === "_" || boardB === "_" || boardC === "_") {
+        continue
+      }
+
+      if (boardA === boardB && boardB === boardC) {
+        return boardA
+      }
+    }
+    return false
   }
 }

@@ -1,4 +1,6 @@
 import { createIcons, Circle, X } from "lucide"
+import TicTacToeGame from "./lib/tictactoe_game"
+import { Move } from "./types/types"
 
 createIcons({
   icons: {
@@ -7,12 +9,13 @@ createIcons({
   },
 })
 
-import TicTacToeGame from "./lib/tictactoe_game"
-import { Move } from "./types/types"
-
 const startingMove: Move = "x"
-
-const container = document.querySelector("#container") as HTMLDivElement
-
+const boardContainer = document.querySelector(
+  "#game-container",
+) as HTMLDivElement
+const controlsContainer = document.querySelector(
+  "#controls-container",
+) as HTMLDivElement
 const game = new TicTacToeGame()
-game.init(container, startingMove)
+
+game.init({ boardContainer, startingMove, controlsContainer })
