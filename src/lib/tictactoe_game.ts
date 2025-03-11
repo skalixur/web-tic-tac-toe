@@ -99,12 +99,12 @@ export default class TicTacToeGame {
     }
 
     const onDomResetClick = () => {
-      this.resetGameState()
       this.cleanUpEventListeners({
         onDomHistoryForwardClick,
         onDomHistoryBackwardClick,
         onDomResetClick,
       })
+      this.resetGameState()
       this.init({
         startingMove,
         boardContainer,
@@ -231,7 +231,6 @@ export default class TicTacToeGame {
       this.domStatusDisplay.textContent = this.messageFromGameState()
     }
 
-    console.log(this.gameState)
     return this.gameState
   }
 
@@ -298,14 +297,11 @@ export default class TicTacToeGame {
     this.domHistoryForwardButton.disabled = false
     this.domHistoryBackButton.disabled = false
 
-    console.log(newIndex, this.boardHistory.length)
-
     if (newIndex <= 0) {
       this.domHistoryBackButton.disabled = true
     }
 
     if (newIndex >= this.boardHistory.length - 1) {
-      console.log("new index ge length")
       this.domHistoryForwardButton.disabled = true
     }
   }
