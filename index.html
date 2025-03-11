@@ -9,12 +9,33 @@
   <title>Web Tic Tac Toe</title>
 </head>
 
-<body class="flex h-[100vh] w-[100vw] flex-col items-center justify-end gap-8 md:flex-row-reverse md:justify-around">
-  <div id="game-container"
-    class="grid aspect-square size-[80vmin] grid-cols-3 grid-rows-3 items-center justify-items-center md:size-[60vmin]">
+<body class="flex h-[100vh] w-[100vw] flex-col items-center justify-end gap-8 text-center md:justify-center">
+  <div class="mt-8 grid size-full place-items-center md:mt-0 md:size-fit">
+    <div id="game-container"
+      class="grid aspect-square size-[75vmin] grid-cols-3 grid-rows-3 items-center justify-items-center md:size-[60vmin]">
+    </div>
   </div>
-  <div id="controls-container" class="h-[20vmin] w-full border p-4 md:h-auto md:w-auto md:rounded-md">
-    Controls
+  <span class="text-lg font-bold sm:text-2xl" id="status-display"> </span>
+  <div id="controls-container" class="flex h-auto w-full flex-col gap-2 border p-4 md:w-[30%] md:rounded-md">
+    <div class="flex flex-wrap items-center justify-start gap-2 md:justify-between">
+      History
+      <div class="flex flex-nowrap items-start justify-center">
+        <button id="history-back"
+          class="rounded-sm p-1 transition-colors hover:cursor-pointer hover:bg-muted disabled:text-muted-foreground disabled:hover:cursor-default disabled:hover:bg-transparent">
+          <i data-lucide="step-back"></i>
+        </button>
+        <button id="history-forward"
+          class="rounded-sm p-1 transition-colors hover:cursor-pointer hover:bg-muted disabled:text-muted-foreground disabled:hover:cursor-default disabled:hover:bg-transparent">
+          <i data-lucide="step-forward"></i>
+        </button>
+        <button id="reset"
+          class="rounded-sm p-1 transition-colors hover:cursor-pointer hover:bg-muted disabled:text-muted-foreground disabled:hover:cursor-default disabled:hover:bg-transparent">
+          <i data-lucide="rotate-ccw"></i>
+        </button>
+      </div>
+    </div>
+    <div id="history-container" class="flex w-auto grow flex-wrap justify-center gap-1">
+    </div>
   </div>
 </body>
 
